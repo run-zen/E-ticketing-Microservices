@@ -2,6 +2,7 @@ import express from 'express';
 import 'express-async-errors';
 import cors from 'cors';
 import mongoose from 'mongoose';
+import cookieSession from 'cookie-session';
 
 import { currentuser } from './routes/current-user';
 import { signinRouter } from './routes/signin';
@@ -11,7 +12,14 @@ import { errorHandler } from './middlewares/error-handler';
 import { NotFoundError } from './Errors/not-found-error';
 
 const app = express();
+app.set('trust proxy', true);
 app.use(express.json());
+app.use(
+    cookieSession({
+        signed: false,
+        secure: true,
+    })
+);
 app.use(cors());
 
 app.use(currentuser);
@@ -33,7 +41,7 @@ const start = async () => {
             useCreateIndex: true,
         });
 
-        console.log('successfully connected to mongoDB ..............');
+        console.log('connected to mongoDB ..............');
     } catch (err) {
         console.log(err);
     }
